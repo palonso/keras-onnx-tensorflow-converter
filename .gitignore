@@ -1,0 +1,6 @@
+*.pyc
+
+# models
+*.onnx
+*.h5
+*.pb

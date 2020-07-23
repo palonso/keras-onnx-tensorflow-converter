@@ -1,0 +1,5 @@
+tensorflow
+tensorflow_addons
+onnx
+keras2onnx
+https://github.com/onnx/onnx-tensorflow/archive/master.zip
