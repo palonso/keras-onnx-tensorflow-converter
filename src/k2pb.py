@@ -7,8 +7,8 @@ from change_interface_names import change_interface_names
 from o2pb import o2pb
 
 TMP_MODEL = 'tmp.onnx'
-INPUT_NAME = 'Input'
-OUTPUT_NAME = 'Output'
+INPUT_NAME = 'input'
+OUTPUT_NAME = 'output'
 
 def k2pb(keras_model=None, pb_model=None, force=False, rename=False, input_name=None, output_name=None):
     """Converts a Keras model into TensorFlow's Protocol Buffer (.pb) format."""
