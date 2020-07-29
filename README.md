@@ -2,10 +2,12 @@
 Wrapper scripts to convert Keras models to ONNX and Protocol Buffers (.pb)
 
 ## Install
+We have different requirements files for TensorFlow 1.X and 2.X. So far, `requirements_TF1.txt` has only been tested for TensorFlow 1.15.2.
+
 ```ShellSession
 python3 -m virtualenv venv
 source venv/bin/activate
-pip install -r requirements.txt
+pip install -r requirements_TFX.txt
 ```
 
 ## Usage
