@@ -4,3 +4,5 @@
 *.onnx
 *.h5
 *.pb
+
+venv/*
