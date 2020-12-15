@@ -1,4 +1,4 @@
-tensorflow==1.15.2
+tensorflow==2.4.0
 onnx==1.6
 keras2onnx
 https://github.com/onnx/onnx-tensorflow/archive/tf-1.x.zip
