@@ -1,9 +1,10 @@
 import argparse
 import os
 import tensorflow as tf
-from keras2onnx import convert_keras, save_model
 
 os.environ['TF_KERAS'] = '1'
+
+from keras2onnx import convert_keras, save_model
 
 
 def k2o(keras_model=None, onnx_model=None, force=False):
