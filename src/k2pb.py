@@ -34,6 +34,9 @@ def k2pb(keras_model=None, pb_model=None, force=False, rename=False, input_name=
                 change_interface_names(TMP_MODEL, TMP_MODEL, force=True, **names)
 
             o2pb(TMP_MODEL, pb_model, force=force)
+
+            print(f"Saved output model in: {pb_model}")
+
         finally:
             os.remove(TMP_MODEL)
     else:
