@@ -11,7 +11,7 @@ pip install -r requirements_TFX.txt
 ```
 
 ## Usage
-`k2pb.py` is the main script in this repository. It takes a Keras (.h5) file as input and produces a TensorFlow Protocol Buffer (.pb) as output using ONNX as an intermediate exchange format. By setting the flag `--rename` or specifing `--input` or `--outout` the model's input and output can be renamed.
+`k2pb.py` takes a Keras (.h5) file as input and produces a TensorFlow Protocol Buffer (.pb) as output using ONNX as an intermediate exchange format. By setting the flag `--rename` or specifing `--input` or `--outout` the model's input and output can be renamed.
 
 ```ShellSession
 python3 src/k2pb.py --help
@@ -47,15 +47,15 @@ optional arguments:
   -f, --force
 ```
 
-`o2pb.pb` takes an ONNX file and converts it into a TensorFlow's Protocol Buffer (.pb).
+`o2sm.pb` takes an ONNX file and converts it into a TensorFlow's SavedModel.
 
 ```ShellSession
-python3 src/o2pb.py --help
-usage: Converts an ONNX model into TensorFlow's Protocol Buffer (.pb) format. [-h] [-f] onnx_model pb_model
+python3 src/o2sm.py --help
+usage: Converts an ONNX model into TensorFlow's Protocol Buffer (.pb) format. [-h] [-f] onnx_model sm_model
 
 positional arguments:
   onnx_model
-  pb_model
+  sm_model
 
 optional arguments:
   -h, --help   show this help message and exit
@@ -98,4 +98,36 @@ optional arguments:
   -f, --force
   -i INPUT_NAME, --input-name INPUT_NAME
   -o OUTPUT_NAME, --output-name OUTPUT_NAME
+```
+
+`add_output_node.py` adds a new output `node_out` pointing to a given `input_node` through an Identity node.
+
+```ShellSession
+python3 src/add_output_node.py --help
+usage: Adds a new output `node_out` pointing to a given `input_node` through an Identity node. We recommend using a tool such as Netron to check the architecture and node name on `model_in`
+       [-h] model_in model_out node_in node_out
+
+positional arguments:
+  model_in
+  model_out
+  node_in
+  node_out
+
+optional arguments:
+  -h, --help  show this help message and exit
+```
+
+`change_batch_size.py` changes the model's batch size to a fix of dynamic value.
+
+```ShellSession
+python3 src/change_batch_size.py --help
+usage: Change model's batch size [-h] model_in model_out batch_size
+
+positional arguments:
+  model_in
+  model_out
+  batch_size
+
+optional arguments:
+  -h, --help  show this help message and exit
 ```
