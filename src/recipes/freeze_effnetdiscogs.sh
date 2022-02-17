@@ -21,4 +21,6 @@ python3 ../o2sm.py ${intermediate_path} ${sm_model} --force
 
 python3 ../sm2pb.py ${sm_model} ${pb_model}
 
+rm ${intermediate_path}
+
 echo "done!"
