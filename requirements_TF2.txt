@@ -1,5 +1,5 @@
-tensorflow==2.2.1
+tensorflow~=2.8
 tensorflow_addons
 onnx
 keras2onnx
-https://github.com/onnx/onnx-tensorflow/archive/rel-1.6.0.zip
+onnx-tf~=1.9
