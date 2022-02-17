@@ -131,3 +131,20 @@ positional arguments:
 optional arguments:
   -h, --help  show this help message and exit
 ```
+
+`pb2sm.py` converts a frozen model (.pb) into a TF2 SavedModel.
+
+```ShellSession
+python3 src/pb2sm.py --help
+usage: pb2sm.py [-h] input output input_name output_name
+
+positional arguments:
+  input
+  output
+  input_name
+  output_name
+
+optional arguments:
+  -h, --help   show this help message and exit
+
+```
