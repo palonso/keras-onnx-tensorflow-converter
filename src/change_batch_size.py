@@ -11,9 +11,18 @@ def add_output_node(
     model = onnx.shape_inference.infer_shapes(model)
     graph = model.graph
 
+    if batch_size.isnumeric():
+        batch_size = int(batch_size)
+
     # Change batch size in input, output and value_info
     for tensor in list(graph.input) + list(graph.value_info) + list(graph.output):
-        tensor.type.tensor_type.shape.dim[0].dim_value = batch_size
+        batch_dim = tensor.type.tensor_type.shape.dim[0]
+        if type(batch_size) == int:
+            batch_dim.dim_value = batch_size
+        elif type(batch_size) == str:
+            batch_dim.dim_param = batch_size
+        else:
+            raise NotImplementedError("batch_size shoud be rather string or int")
 
     # Set dynamic batch size in reshapes (-1)
     for node in graph.node:
@@ -43,6 +52,6 @@ if __name__ == "__main__":
         "Change model's batch size")
     parser.add_argument('model_in')
     parser.add_argument('model_out')
-    parser.add_argument('batch_size', type=int)
+    parser.add_argument('batch_size', type=str)
 
     add_output_node(**vars(parser.parse_args()))
