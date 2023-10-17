@@ -2,6 +2,7 @@ from argparse import ArgumentParser
 import struct
 import onnx
 
+
 def add_output_node(
     model_in=None,
     model_out=None,
@@ -44,7 +45,6 @@ def add_output_node(
                 init.raw_data = bytes(shape)
 
     onnx.save(model, model_out)
-
 
 
 if __name__ == "__main__":
