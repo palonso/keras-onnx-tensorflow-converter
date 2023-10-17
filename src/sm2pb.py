@@ -4,9 +4,10 @@ import tensorflow as tf
 
 tf.compat.v1.disable_eager_execution()
 
+
 def o2pb(sm_model=None, pb_model=None, force=False):
     """Converts an ONNX model into TensorFlow's Protocol Buffer (.pb) format."""
-    
+
     if not os.path.exists(pb_model) or force:
         with tf.Graph().as_default() as g:
             with tf.compat.v1.Session() as sess:

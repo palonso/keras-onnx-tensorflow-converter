@@ -6,7 +6,7 @@ from onnx_tf.backend import prepare
 
 def o2pb(onnx_model=None, sm_model=None, force=False):
     """Converts an ONNX model into TensorFlow's SavedModel format."""
-    
+
     if not os.path.exists(sm_model) or force:
         model = onnx.load(onnx_model)  # load ONNX model
 
