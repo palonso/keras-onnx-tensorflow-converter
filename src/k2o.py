@@ -10,7 +10,7 @@ def k2o(keras_model=None, onnx_model=None, force=False):
     """Converts a Keras model into ONNX format."""
     
     if not os.path.exists(onnx_model) or force:
-        model = tf.keras.models.load_model(keras_model)
+        model = tf.keras.models.load_model(keras_model, compile=False)
         save_model(convert_keras(model), onnx_model)
     else:
         print('"{}" already exists. Change `onnx_model` name or use `force`.'.format(onnx_model))
