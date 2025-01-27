@@ -41,7 +41,7 @@ def add_output_node(
     output_shape = [try_parse_int(x) for x in output_shape]
 
     identity_node = onnx.helper.make_node(
-        node_type, inputs=[new_output.output[0]], outputs=[node_out]
+        node_type, inputs=[new_output.output[0]], outputs=[node_out], name=f"{node_type}_{node_out}",
     )
     model.graph.node.append(identity_node)
 
