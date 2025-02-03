@@ -2,9 +2,25 @@ from argparse import ArgumentParser
 import onnx
 import onnx.helper as helper
 from onnx import TensorProto
-from onnx import version_converter
 
-def extract_last_n_layers(model_path, n, output_path=None):
+
+def try_parse_int(item):
+    result = item
+    try:
+        result = int(item)
+    except ValueError:
+        pass
+
+    return result
+
+def extract_last_n_layers(
+    model_path,
+    n, 
+    output_path=None,
+    input_node_name=None,
+    input_shape=None,
+    output_node_names=None,
+):
     """
     Extract last N layers from an ONNX model
     
@@ -18,6 +34,18 @@ def extract_last_n_layers(model_path, n, output_path=None):
     """
     # Load original model
     model = onnx.load(model_path)
+
+    ir_version = model.ir_version
+    model_version = model.model_version
+    opset_import = model.opset_import
+
+    print("Input model specs:")
+    print("  ir_version:", ir_version)
+    print("  model_version:", model_version)
+    print("  opset_import:", opset_import)
+    
+    print("Checking input model")
+    onnx.checker.check_model(model)
     
     # Get node names in original graph
     node_names = [node.name for node in model.graph.node]
@@ -31,7 +59,7 @@ def extract_last_n_layers(model_path, n, output_path=None):
     selected_nodes = [node for node in model.graph.node if node.name in last_n_nodes]
 
     # Collect required initializers (weights)
-    print("Required initializers:")
+    print("\nrequired initializers:")
     required_initializers = []
     for node in selected_nodes:
         # Find initializers used by these nodes
@@ -39,35 +67,31 @@ def extract_last_n_layers(model_path, n, output_path=None):
         if not node.name:
             continue
 
-
         for input_name in node.input:
-            print(f"input node: {input_name}")
             matching_init = [init for init in model.graph.initializer if init.name == input_name]
-            required_initializers.extend(matching_init)
 
-            for init in matching_init:
-                print(init.name)
+            if matching_init:
+                print(f"node name: {node.name}")
+                print(f"input node: {input_name}")
 
-    print("\n")
+                for init in matching_init:
+                    print("  ", init.name)
 
-    # Create a new graph with only these nodes
-    inputs = [inp for inp in model.graph.input]
+                required_initializers.extend(matching_init)
 
-    new_input_name = "layer_11_embeddings"
-    new_input_shape = tuple(["batch_size", 281, 768])
+
+    input_shape = [try_parse_int(x) for x in input_shape]
     
     inputs = [helper.make_tensor_value_info(
-        new_input_name, 
+        input_node_name, 
         TensorProto.FLOAT, 
-        new_input_shape,
+        input_shape,
     )]
 
-    outputs = [
-        model.graph.output[0],
-        model.graph.output[1],
-    ]
+    output_node_names = set(output_node_names)
+    outputs = [output for output in model.graph.output if output.name in output_node_names]
 
-    print("outputs")
+    print("model outputs:")
     print(outputs)
     
     # Create a new model with selected nodes
@@ -79,8 +103,27 @@ def extract_last_n_layers(model_path, n, output_path=None):
         initializer=required_initializers,
     )
     
-    extracted_model = helper.make_model(extracted_graph)
+    extracted_model = helper.make_model(
+        extracted_graph,
+        opset_imports=opset_import,
+    )
 
+    extracted_model.ir_version = ir_version
+    extracted_model.model_version = model_version
+
+    # Rename duplicate initializers
+    unique_initializers = set()
+    i = 0
+    for initializer in extracted_model.graph.initializer:
+        if initializer.name in unique_initializers:
+            # Generate a unique name
+            new_name = f"{initializer.name}_{i}"
+            print(f"Renaming initializer '{initializer.name}' to '{new_name}'")
+            initializer.name = new_name
+            i += 1
+        unique_initializers.add(initializer.name)
+
+    onnx.checker.check_model(extracted_model)
     
     # Save model if output path provided
     if output_path:
@@ -95,7 +138,17 @@ if __name__ == '__main__':
     parser.add_argument("model_in")
     parser.add_argument("model_out")
     parser.add_argument("n_nodes", type=int)
+    parser.add_argument("input_node_name")
+    parser.add_argument("--input-shape", nargs="+")
+    parser.add_argument("--output-node-names", nargs="+")
 
     args = parser.parse_args()
 
-    extract_last_n_layers(args.model_in, n=args.n_nodes, output_path=args.model_out)
+    extract_last_n_layers(
+        args.model_in,
+        n=args.n_nodes,
+        output_path=args.model_out,
+        input_node_name=args.input_node_name,
+        input_shape=args.input_shape,
+        output_node_names=args.output_node_names,
+    )
